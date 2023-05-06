@@ -1,0 +1,22 @@
+name: idrome
+dependencies:
+  - python=3.8
+  - jinja2
+  - notebook
+  - numpy
+  - pandas
+  - scipy=1.10
+  - matplotlib
+  - statsmodels
+  - seaborn
+  - scikit-learn=1.0.2
+  - urllib3
+  - openpyxl
+  - conda-forge::mdtraj
+  - pip
+  - pip:
+    - pprintpp
+    - localcider==0.1.19
+    - obonet==0.3
+    - omadb==2.1.8
+    - networkx==3.0
