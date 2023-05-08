@@ -1,10 +1,11 @@
-<a target="_blank" href="https://colab.research.google.com/github/https://colab.research.google.com/github/KULL-Centre/_2023_Tesei_IDRome/blob/main/IDRLab.ipynb">
+<a target="_blank" href="https://colab.research.google.com/github/KULL-Centre/_2023_Tesei_IDRome/blob/main/IDRLab.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
 # Analyses of conformational ensembles of the human IDRome
 
-This repository contains Python code, [Jupyter](http://jupyter.org) Notebooks, and data for reproducing the results presented in the manuscript _Conformational ensembles of the human intrinsically disordered proteome: Bridging chain compaction with function and sequence conservation_
+This repository contains Python code, [Jupyter](http://jupyter.org) Notebooks, and data for reproducing the results presented in the manuscript _Conformational ensembles of the human intrinsically disordered proteome: Bridging chain compaction with function and sequence conservation_.
+
 The CSV file `IDRome_DB.csv` and the Excel Sheet `IDRome_DB.xlsx` list the sequence and various sequence- and conformational properties of all the 29,998 IDRs.
 
 Simulations trajectories and time series of conformational properties are available for all the 29,998 IDRs at [sid.erda.dk/sharelink/AVZAJvJnCO](https://sid.erda.dk/sharelink/AVZAJvJnCO).
