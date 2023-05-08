@@ -5,6 +5,8 @@ The CSV file `IDRome_DB.csv` and the Excel Sheet `IDRome_DB.xlsx` list the seque
 
 Simulations trajectories and time series of conformational properties are available for all the 29,998 IDRs at [sid.erda.dk/sharelink/AVZAJvJnCO](https://sid.erda.dk/sharelink/AVZAJvJnCO).
 
+We also provide a [Notebook](https://colab.research.google.com/github/KULL-Centre/_2023_Tesei_IDRome/blob/main/IDRLab.ipynb) on [Google Colab](https://colab.research.google.com/) to generate conformational ensembles of user-supplied sequences and conditions using the [CALVADOS](https://github.com/KULL-Centre/CALVADOS) model. 
+
 ### Layout
 - `seq_conf_prop.ipynb` reproduces Fig. 1, 3, S3, S4, S6, and S10
 - `go_analysis.ipynb` reproduces Fig. 2
