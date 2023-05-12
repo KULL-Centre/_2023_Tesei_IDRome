@@ -30,10 +30,13 @@ sequences = pd.read_csv('../data/idr_all.csv.gz',header=0,sep=';')
 sequences.sort_values('uniprot',inplace=True)
 sequences['seq_name'] = sequences.uniprot+'_'+sequences['first'].apply(lambda x : '{:g}'.format(x))+'_'+sequences['last'].apply(lambda x : '{:g}'.format(x))
 sequences.set_index('seq_name',inplace=True)
-#sequences.sort_values('nres_seg',inplace=True)
+
+# Download blocking code
+if not os.path.exists('BLOCKING'):
+    subprocess.check_call(['git','clone','https://github.com/fpesceKU/BLOCKING'])
 
 print(sequences.index.size)
-#Making the directories, sorted by their uniprot IDs split into twos, i.e. P57678_180_217 will be saved to P5/76/78/180_217
+# Making the directories, sorted by their uniprot IDs split into twos, i.e. P57678_180_217 will be saved to P5/76/78/180_217
 for i,name in enumerate(sequences.index[:]):
     first_last = '{:g}_{:g}'.format(sequences.loc[name,'first'],sequences.loc[name,'last'])
     title1 = name[:2]

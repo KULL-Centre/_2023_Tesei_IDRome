@@ -136,16 +136,13 @@ def calcRgTensor(t,residues,seq):
 def calcRs(traj):
     pairs = traj.top.select_pairs('all','all')
     d = md.compute_distances(traj,pairs)
-    dmean = d.mean(axis=0)
     nres = traj.n_atoms
     ij = np.arange(2,nres,1)
     diff = [x[1]-x[0] for x in pairs]
     dij = np.empty(0)
     for i in ij:
-        dij = np.append(dij,dmean[diff==i].mean())
-    ln_ij =  np.log(ij[ij>10])
-    ln_dij = np.log(dij[ij>10])
-    return ij,dij,ln_ij,ln_dij,np.mean(1/d,axis=1)
+        dij = np.append(dij,np.sqrt((d[:,diff==i]**2).mean().mean()))
+    return ij,dij,np.mean(1/d,axis=1)
 
 def analyse(residues,path,seq):
     top = md.Topology()
@@ -213,7 +210,7 @@ def analyse(residues,path,seq):
     df_analysis.loc['ete2_Rg2','error'] = error_ratio(ete2,rg2,ete2_e,rg2_e)
     #nonlinear scaling exponent
     f = lambda x,R0,v : R0*np.power(x,v)
-    ij,dij,ln_ij,ln_dij,invrij = calcRs(traj)
+    ij,dij,invrij = calcRs(traj)
     block_invrij = BlockAnalysis(invrij, multi=1)
     block_invrij.SEM()
     df_analysis.loc['rh','value'] = 1/(1-1/N_res)/block_invrij.av
@@ -304,9 +301,9 @@ def simulate(residues,sequences,seq_name,path):
 
     hoomd.dump.gsd(filename=path+'/restart.gsd', group=hoomd.group.all(), truncate=True, period=None, phase=0)
 
-residues = pd.read_csv('../../data/residues.csv').set_index('one',drop=False)
+residues = pd.read_csv('residues.csv').set_index('one',drop=False)
 
-sequences = pd.read_csv('../../data/replicas_data.csv',index_col=0)
+sequences = pd.read_csv('replicas.csv',index_col=0)
 sequences.N = sequences.N.apply(lambda x : int(x))
 sequences.to_pickle('proteins.pkl')
 

@@ -8,7 +8,7 @@ This repository contains Python code, [Jupyter](http://jupyter.org) Notebooks, a
 
 The CSV file `IDRome_DB.csv` and the Excel Sheet `IDRome_DB.xlsx` list the sequence and various sequence- and conformational properties of all the 29,998 IDRs.
 
-Simulations trajectories and time series of conformational properties are available for all the 29,998 IDRs at [sid.erda.dk/sharelink/AVZAJvJnCO](https://sid.erda.dk/sharelink/AVZAJvJnCO).
+Simulation trajectories and time series of conformational properties are available for all the 29,998 IDRs at [sid.erda.dk/sharelink/AVZAJvJnCO](https://sid.erda.dk/sharelink/AVZAJvJnCO).
 
 We also provide a [Notebook](https://colab.research.google.com/github/KULL-Centre/_2023_Tesei_IDRome/blob/main/IDRLab.ipynb) on [Google Colab](https://colab.research.google.com/) to generate conformational ensembles of user-supplied sequences using the [CALVADOS](https://github.com/KULL-Centre/CALVADOS) model. 
 
@@ -34,4 +34,25 @@ To open the Notebooks, install [Miniconda](https://conda.io/miniconda.html) and 
     conda env create -f environment.yml
     source activate idrome
     jupyter-notebook
+```
+
+#### Commands to install [HOOMD-blue](https://hoomd-blue.readthedocs.io/en/latest/) v2.9.3 with [mphowardlab/azplugins](https://github.com/mphowardlab/azplugins) v0.11.0
+
+```bash
+    curl -LO https://github.com/glotzerlab/hoomd-blue/releases/download/v2.9.3/hoomd-v2.9.3.tar.gz
+    tar xvfz hoomd-v2.9.3.tar.gz
+    git clone https://github.com/mphowardlab/azplugins.git
+    cd azplugins
+    git checkout tags/v0.11.0
+    cd ..
+    cd hoomd-v2.9.3
+    mkdir build
+    cd build
+    cmake ../ -DCMAKE_INSTALL_PREFIX=<path to python> \
+        -DENABLE_CUDA=ON -DENABLE_MPI=ON -DSINGLE_PRECISION=ON -DENABLE_TBB=OFF \
+        -DCMAKE_CXX_COMPILER=<path to g++> -DCMAKE_C_COMPILER=<path to gcc>
+    make -j4
+    cd ../hoomd
+    ln -s ../../azplugins/azplugins azplugins
+    cd ../build && make install -j4
 ```

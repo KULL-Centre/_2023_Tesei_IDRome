@@ -28,6 +28,10 @@ python ./simulate.py --seq_name {{name}} --path {{path}}""")
 
 sequences = pd.read_csv('../../data/replicas_data.csv',index_col=0)
 
+# Download blocking code
+if not os.path.exists('BLOCKING'):
+    subprocess.check_call(['git','clone','https://github.com/fpesceKU/BLOCKING'])
+
 for name in sequences.index:
     print(name)
     if not os.path.isdir(name):
