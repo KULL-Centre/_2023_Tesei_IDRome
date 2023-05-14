@@ -13,7 +13,7 @@ Simulation trajectories and time series of conformational properties are availab
 We also provide a [Notebook](https://colab.research.google.com/github/KULL-Centre/_2023_Tesei_IDRome/blob/main/IDRLab.ipynb) on [Google Colab](https://colab.research.google.com/) to generate conformational ensembles of user-supplied sequences using the [CALVADOS](https://github.com/KULL-Centre/CALVADOS) model. 
 
 
-[![Video](https://img.youtube.com/vi/YZ253PfWAt0/default.jpg)](https://youtu.be/v7YqJVEswM0)
+[![Video](https://img.youtube.com/vi/v7YqJVEswM0/default.jpg)](https://youtu.be/v7YqJVEswM0)
 
 ### Layout
 - `seq_conf_prop.ipynb` reproduces Fig. 1, 3, S3, S4, S6, and S10
