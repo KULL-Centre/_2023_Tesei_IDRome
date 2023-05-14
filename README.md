@@ -1,6 +1,6 @@
 [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/KULL-Centre/_2023_Tesei_IDRome/blob/main/IDRLab.ipynb)
 [![DOI:10.1101/2023.05.08.539815](http://img.shields.io/badge/DOI-10.1101/2023.05.08.539815-B31B1B.svg)](https://doi.org/10.1101/2023.05.08.539815)
-[![Video](http://img.shields.io/badge/►-Video-FF0000.svg)](https://www.youtube.com/watch?v=YZ253PfWAt0)
+[![Video](http://img.shields.io/badge/►-Video-FF0000.svg)](https://youtu.be/v7YqJVEswM0)
 
 # Analyses of conformational ensembles of the human IDRome
 
@@ -13,7 +13,7 @@ Simulation trajectories and time series of conformational properties are availab
 We also provide a [Notebook](https://colab.research.google.com/github/KULL-Centre/_2023_Tesei_IDRome/blob/main/IDRLab.ipynb) on [Google Colab](https://colab.research.google.com/) to generate conformational ensembles of user-supplied sequences using the [CALVADOS](https://github.com/KULL-Centre/CALVADOS) model. 
 
 
-[![Video](https://img.youtube.com/vi/YZ253PfWAt0/default.jpg)](https://www.youtube.com/watch?v=YZ253PfWAt0)
+[![Video](https://img.youtube.com/vi/YZ253PfWAt0/default.jpg)](https://youtu.be/v7YqJVEswM0)
 
 ### Layout
 - `seq_conf_prop.ipynb` reproduces Fig. 1, 3, S3, S4, S6, and S10
