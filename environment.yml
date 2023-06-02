@@ -17,6 +17,7 @@ dependencies:
   - pip:
     - pprintpp
     - localcider==0.1.19
+    - nardini==1.1.1
     - obonet==0.3
     - omadb==2.1.8
     - networkx==3.0
