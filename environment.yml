@@ -21,3 +21,4 @@ dependencies:
     - obonet==0.3
     - omadb==2.1.8
     - networkx==3.0
+    - fretpredict

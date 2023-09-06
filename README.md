@@ -1,31 +1,43 @@
 [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/KULL-Centre/_2023_Tesei_IDRome/blob/main/IDRLab.ipynb)
-[![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/KULL-Centre/_2023_Tesei_IDRome/blob/main/nu_SVR_predictor.ipynb)
+[![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/KULL-Centre/_2023_Tesei_IDRome/blob/main/IDR_SVR_predictor.ipynb)
 [![DOI:10.1101/2023.05.08.539815](http://img.shields.io/badge/DOI-10.1101/2023.05.08.539815-B31B1B.svg)](https://doi.org/10.1101/2023.05.08.539815)
 [![Video](http://img.shields.io/badge/►-Video-FF0000.svg)](https://youtu.be/v7YqJVEswM0)
 
-# Analyses of conformational ensembles of the human IDRome
+# Conformational ensembles of the human IDRome
 
 This repository contains Python code, [Jupyter](http://jupyter.org) Notebooks, and data for reproducing the results presented in the manuscript _Conformational ensembles of the human intrinsically disordered proteome: Bridging chain compaction with function and sequence conservation_.
 
-The CSV file `IDRome_DB.csv` and the Excel Sheet `IDRome_DB.xlsx` list the sequence and various sequence- and conformational properties of all the 29,998 IDRs.
+The CSV file `IDRome_DB.csv` and the Excel Sheet `IDRome_DB.xlsx` list the sequence and various sequence- and conformational properties of all the 28,058 IDRs.
 
-Simulation trajectories and time series of conformational properties are available for all the 29,998 IDRs at [sid.erda.dk/sharelink/AVZAJvJnCO](https://sid.erda.dk/sharelink/AVZAJvJnCO).
+Simulation trajectories and time series of conformational properties are available for all the IDRs at [sid.erda.dk/sharelink/AVZAJvJnCO](https://sid.erda.dk/sharelink/AVZAJvJnCO).
 
-We also provide a [Notebook](https://colab.research.google.com/github/KULL-Centre/_2023_Tesei_IDRome/blob/main/IDRLab.ipynb) on [Google Colab](https://colab.research.google.com/) to generate conformational ensembles of user-supplied sequences using the [CALVADOS](https://github.com/KULL-Centre/CALVADOS) model. 
+We also provide Notebooks on [Google Colab](https://colab.research.google.com/) to (i) generate conformational ensembles of user-supplied sequences using the [CALVADOS](https://github.com/KULL-Centre/CALVADOS) model and (ii) predict scaling exponents and conformational entropies per residue using the SVR models:
+- [`IDRLab.ipynb`](https://colab.research.google.com/github/KULL-Centre/_2023_Tesei_IDRome/blob/main/IDRLab.ipynb)
+- [`IDR_SVR_predictor.ipynb`](https://colab.research.google.com/github/KULL-Centre/_2023_Tesei_IDRome/blob/main/IDR_SVR_predictor.ipynb)
 
 
 [![Video](https://img.youtube.com/vi/v7YqJVEswM0/default.jpg)](https://youtu.be/v7YqJVEswM0)
 
 ### Layout
-- `seq_conf_prop.ipynb` reproduces Fig. 1, 3, S3, S4, S6, and S10
+- `seq_conf_prop.ipynb` reproduces Fig. 1, 3, S2, S5, S6 _E_–_T_, and S7
 - `go_analysis.ipynb` reproduces Fig. 2
 - `conservation_analysis.ipynb` reproduces Fig. 4
-- `clinvar_fmug.ipynb` reproduces Fig. 5, S8, and S9
-- `uniprot_domains.ipynb` reproduces Fig. S1, S2, and S5
-- `svr_model.ipynb` reproduces Fig. S7
+- `clinvar_fmug.ipynb` reproduces Fig. 5 and S9
+- `uniprot_domains.ipynb` reproduces Fig. S1
+- `svr_models.ipynb` reproduces Fig. S8
 - `go_uniprot_calls.ipynb` performs API calls to obtain gene ontology terms from UniProt
-- `calc_seq_prop.ipynb` computes sequence descriptors for all the 29,998 IDRs
+- `calc_seq_prop.ipynb` and `calc_seq_prop_SPOT.ipynb` compute sequence descriptors and generate the `IDRome_DB.csv` and `IDRome_DB_SPOT.csv` files
+- `CALVADOS_tests.ipynb` reproduces Fig. S3
+- `AF2_PAEs.ipynb` reproduces Fig. S4 
+- `CD-CODE.ipynb` reproduces Fig. S6 _A–D_
 - `md_simulations/` contains code and data related to single-chain simulations performed using the CALVADOS model and [HOOMD-blue](https://hoomd-blue.readthedocs.io/en/latest/) v2.9.3 installed with [mphowardlab/azplugins](https://github.com/mphowardlab/azplugins)
+- `idr_selection/` contains code and data to generate the pLDDT-based and SPOT-based sets of IDRs
+- `idr_orthologs/` contains code and data to generate the set of orthologs of human IDRs
+- `svr_models/` contains scikit-learn SVR models generated in `svr_models.ipynb`
+- `zscores/` contains code and data to calculate [NARDINI](https://github.com/mshinn23/nardini) z-scores
+- `go_analyses/` contains input and output data related to the Gene Ontology analyses in `go_analysis.ipynb`
+- `QCDPred/` contains code and data related to [QCD calculations](https://github.com/KULL-Centre/papers/tree/main/2022/degron-predict-Johansson-et-al)
+- `clinvar_fmug_cdcode/` contains code and data related to the analysis of the [ClinVar](https://www.ncbi.nlm.nih.gov/clinvar/), [FMUG](https://fmug.amaral.northwestern.edu/), and [CD-CODE](https://cd-code.org/) databases
 
 ### Usage
 

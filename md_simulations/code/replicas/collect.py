@@ -7,15 +7,16 @@ import time
 from jinja2 import Template
 from statsmodels.tsa.stattools import acf
 
-sequences = pd.read_csv('../../data/replicas_data.csv',index_col=0,dtype=object)
-for name in sequences.index:
+sequences = pd.read_csv('IDRome_DB.csv',index_col=0)
+
+for name in ['Q6IMN6_317_998','Q5VUA4_1_884','P46100_289_1546','Q15648_525_1581','Q13342_131_587','Q9UQL6_176_680']:
     print(name,sequences.loc[name].fasta)
     nres = len(sequences.loc[name].fasta)
     nu = []
     R0 = []
     ete2_Rg2 = []
     emap = []
-    cmap = []
+    stdev = []
     rgarray = []
     Delta_array = []
     S_array = []
@@ -24,12 +25,14 @@ for name in sequences.index:
     acf_3 = []
     Delta = []
     S = []
+    SPR = []
     for replica in range(5):
         analysis = pd.read_csv(name+f'/{replica:d}/analysis.csv',index_col=0)
         emap.append(pd.read_csv(name+f'/{replica:d}/emap.csv',index_col=0))
-        cmap.append(pd.read_csv(name+f'/{replica:d}/cmap.csv',index_col=0))
+        stdev.append(pd.read_csv(name+f'/{replica:d}/stdev.csv',index_col=0))
         Delta.append(analysis.loc['Delta','value'])
         S.append(analysis.loc['S','value'])
+        SPR.append(analysis.loc['SPR','value'])
         nu.append(analysis.loc['nu','value'])
         R0.append(analysis.loc['R0','value'])
         ete2_Rg2.append(analysis.loc['ete2_Rg2','value'])
@@ -41,8 +44,8 @@ for name in sequences.index:
         acf_1.append(acf_rg[1])
         acf_2.append(acf_rg[2])
         acf_3.append(acf_rg[3])
-    pd.DataFrame(index=range(nres),columns=range(nres),data=np.mean(emap,axis=0)).to_csv(name+'_emap.csv')
-    pd.DataFrame(index=range(nres),columns=range(nres),data=np.mean(cmap,axis=0)).to_csv(name+'_cmap.csv')
+    pd.DataFrame(index=range(nres),columns=range(nres),data=np.mean(emap,axis=0)).to_csv(name+'_emap.csv.gz')
+    pd.DataFrame(index=range(nres),columns=range(nres),data=np.mean(stdev,axis=0)).to_csv(name+'_stdev.csv.gz')
     sequences.loc[name,'acf_rg_1'] = np.mean(acf_1)
     sequences.loc[name,'acf_rg_1_err'] = np.std(acf_1)
     sequences.loc[name,'acf_rg_2'] = np.mean(acf_2)
@@ -53,6 +56,8 @@ for name in sequences.index:
     sequences.loc[name,'Delta_err'] = np.std(Delta)
     sequences.loc[name,'S'] = np.mean(S)
     sequences.loc[name,'S_err'] = np.std(S)
+    sequences.loc[name,'SPR'] = np.mean(SPR)
+    sequences.loc[name,'SPR_err'] = np.std(SPR)
     sequences.loc[name,'nu_replicas'] = ', '.join([str(x) for x in nu])
     sequences.loc[name,'nu'] = np.mean(nu)
     sequences.loc[name,'nu_err'] = np.std(nu)
@@ -68,4 +73,4 @@ for name in sequences.index:
     print(name)
     time.sleep(.6)
 
-sequences.to_csv('../../data/replicas_data.csv')
+sequences.to_csv('replicas_data.csv')

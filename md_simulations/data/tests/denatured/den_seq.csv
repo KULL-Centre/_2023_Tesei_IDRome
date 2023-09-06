@@ -1,0 +1,3 @@
+,exp_rg,exp_rg_err,temp,pH,ionic,N,fasta,doi,nu,nu_err,S,S_err,Delta,Delta_err,ete2_Rg2,ete2_Rg2_err,Rg,Rg_err,ete,ete_err,rh,rh_err,R0,R0_err
+NTL9,2.35,0.07,298.0,5.5,0.1,56,MKVIFLKDVKGKGKKGEIKNVADGYANNFLFKQGLAIEATPANLKALEAQKQKEQR,https://doi.org/10.1073/pnas.1818206116,,,,,,,,,,,,,,,,
+EnHD,4.01,0.05,277.0,5.7,0.15,61,GDEKRPRTAFSSEQLARLKREFNENRYLTERRRQQLSSELGLNEAQIKIWFQNKRAKIKKS,https://doi.org/10.1016/j.jmb.2003.08.062,,,,,,,,,,,,,,,,

@@ -9,30 +9,31 @@ from jinja2 import Template
 submission = Template("""#!/bin/sh
 #SBATCH --job-name={{name}}
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=1
-#SBATCH --partition=sbinlab_ib2
-#SBATCH --mem=2GB
-#SBATCH -t 72:00:00
-#SBATCH -o {{path}}/out
+#SBATCH --partition=qgpu
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=18
+#SBATCH --mem=140GB
+#SBATCH -t 48:00:00
 #SBATCH -e {{path}}/err
+#SBATCH -o {{path}}/out
 
-source /groups/sbinlab/giulio/.bashrc
-
+source /home/gitesei/.bashrc
 conda activate idrome
+module purge
+module load cmake/3.9.4 gcc/6.5.0 openmpi/4.0.3 llvm/7.0.0 cuda/9.2.148
 
 echo $SLURM_CPUS_PER_TASK
-
-echo $SLURM_CPUS_ON_NODE
+echo $SLURM_JOB_NODELIST
 
 python ./simulate.py --seq_name {{name}} --path {{path}}""")
 
-sequences = pd.read_csv('../../data/replicas_data.csv',index_col=0)
+sequences = pd.read_csv('IDRome_DB.csv',index_col=0)
 
 # Download blocking code
 if not os.path.exists('BLOCKING'):
     subprocess.check_call(['git','clone','https://github.com/fpesceKU/BLOCKING'])
 
-for name in sequences.index:
+for name in ['Q6IMN6_317_998']:
     print(name)
     if not os.path.isdir(name):
         os.mkdir(name)

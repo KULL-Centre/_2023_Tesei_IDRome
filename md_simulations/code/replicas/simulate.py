@@ -12,7 +12,9 @@ from argparse import ArgumentParser
 from scipy.optimize import curve_fit
 from itertools import combinations
 from numpy import linalg
-sys.path.append('../BLOCKING')
+from sklearn.covariance import LedoitWolf
+from scipy import constants
+sys.path.append('BLOCKING')
 from main import BlockAnalysis
 
 parser = ArgumentParser()
@@ -21,6 +23,28 @@ parser.add_argument('--path',nargs='?',required=True)
 args = parser.parse_args()
 
 print(hoomd.__file__)
+
+def xy_spiral_array(n, delta=0, arc=.38, separation=.7):
+    """
+    create points on an Archimedes' spiral
+    with `arc` giving the length of arc between two points
+    and `separation` giving the distance between consecutive
+    turnings
+    """
+    def p2c(r, phi):
+        """
+        polar to cartesian
+        """
+        return (r * np.cos(phi), r * np.sin(phi))
+    r = arc
+    b = separation / (2 * np.pi)
+    phi = float(r) / b
+    coords = []
+    for i in range(n):
+        coords.append(list(p2c(r, phi))+[0])
+        phi += float(arc) / r
+        r = b * phi
+    return np.array(coords)+delta
 
 def genTop(residues,fasta,path,L):
     N_res = len(fasta)
@@ -62,28 +86,52 @@ def genParams(r,seq,temp,ionic):
     pairs = np.array(list(itertools.combinations_with_replacement(types,2)))
     return yukawa_kappa, yukawa_eps, types, pairs, fasta, r
 
-#energy maps
+#energy functions
 HALR = lambda r,s,l : 4*0.8368*l*((s/r)**12-(s/r)**6)
 HASR = lambda r,s,l : 4*0.8368*((s/r)**12-(s/r)**6)+0.8368*(1-l)
 HA = lambda r,s,l : np.where(r<2**(1/6)*s, HASR(r,s,l), HALR(r,s,l))
 HASP = lambda r,s,l,rc : np.where(r<rc, HA(r,s,l)-HA(rc,s,l), 0)
 
+#force functions
+LJ_F = lambda r,s,rvec : -6*4*0.8368*(2*s**12/r**14-s**6/r**8)*rvec
+HA_F = lambda r,s,l,rvec : np.where(r<2**(1/6)*s, LJ_F(r,s,rvec), l*LJ_F(r,s,rvec))
+HASP_F = lambda r,s,l,rvec,rc : np.where(r<rc, HA_F(r,s,l,rvec), 0)
+
+DH_F = lambda r,yukawa_eps,yukawa_kappa,rvec : -yukawa_eps*np.exp(-r*yukawa_kappa)*(1+r*yukawa_kappa)/r**3*rvec
+DHSP_F = lambda r,yukawa_eps,yukawa_kappa,rvec,rc : np.where(r<rc, DH_F(r,yukawa_eps,yukawa_kappa,rvec), 0)
+
 def calcEnergyMap(t,df,prot,rc):
     indices = t.top.select_pairs('all','all')
     mask = np.abs(indices[:,0]-indices[:,1])>1 #exclude >1, was used to exclude bonded pairs
     indices = indices[mask]
-    d = md.compute_distances(t,indices) #distances between pairs for each frame
-    # d[d>rc] = np.inf
+    dvec = md.compute_displacements(t,indices) #vector distances between pairs for each frame
+    d = linalg.norm(dvec,axis=2)
     pairs = np.array(list(combinations(list(prot.fasta),2)))
     pairs = pairs[mask]
     sigmas = 0.5*(df.loc[pairs[:,0]].sigmas.values+df.loc[pairs[:,1]].sigmas.values)
     lambdas = 0.5*(df.loc[pairs[:,0]].lambdas.values+df.loc[pairs[:,1]].lambdas.values)
+    temp = 310
+    ionic = 0.15
+    RT = 8.3145*temp*1e-3
+    fepsw = lambda T : 5321/T+233.76-0.9297*T+0.1417*1e-2*T*T-0.8292*1e-6*T**3
+    epsw = fepsw(temp)
+    lB = 1.6021766**2/(4*np.pi*8.854188*epsw)*6.022*1000/RT
+    # Calculate the inverse of the Debye length
+    yukawa_kappa = np.sqrt(8*np.pi*lB*ionic*6.022/10)
+    qq = df.loc[pairs[:,0]].q.values*df.loc[pairs[:,1]].q.values
+    yukawa_eps = qq*lB*RT
     emap = np.zeros(pairs.shape[0])
-    switch = np.zeros(pairs.shape[0])
-    for i,r in enumerate(np.split(d,20,axis=0)):
+    forces = np.zeros((t.n_frames,t.n_atoms,3))
+    dstd = np.std(d,axis=0)
+    for j,(r,rvec) in enumerate(zip(np.split(d,20,axis=0),np.split(dvec,20,axis=0))):
         emap += np.nansum(HASP(r,sigmas[np.newaxis,:],lambdas[np.newaxis,:],rc),axis=0)
-        switch += np.nansum((.5-.5*np.tanh((r-sigmas[np.newaxis,:])/.3)),axis=0)
-    return indices, emap/d.shape[0], switch/d.shape[0]
+        for i in range(t.n_atoms):
+            ndx_pairs = np.any(indices==i,axis=1)
+            forces[j*r.shape[0]:(j+1)*r.shape[0],i] = np.nansum(HASP_F(r[:,ndx_pairs,np.newaxis],sigmas[np.newaxis,ndx_pairs,np.newaxis],
+                            lambdas[np.newaxis,ndx_pairs,np.newaxis],rvec[:,ndx_pairs],rc),axis=1)
+            forces[j*r.shape[0]:(j+1)*r.shape[0],i] += np.nansum(DHSP_F(r[:,ndx_pairs,np.newaxis],
+                            yukawa_eps[np.newaxis,ndx_pairs,np.newaxis],yukawa_kappa,rvec[:,ndx_pairs],4),axis=1)
+    return indices, emap/d.shape[0], forces, dstd
 
 def calcRg(t,residues,seq):
     fasta = list(seq.fasta)
@@ -100,14 +148,23 @@ def error_ratio(v1,v2,e1,e2):
     ratio = v1/v2
     return ratio*np.sqrt((e1/v1)**2+(e2/v2)**2)
 
-def calcRgTensor(t,residues,seq):
+def calcRgTensor(t,residues,seq,forces):
     fasta = list(seq.fasta)
-    masses = residues.loc[fasta,'MW'].values
+    masses = residues.loc[fasta,'MW'].values[np.newaxis,:,np.newaxis]
+
+    prefactor = constants.Boltzmann*310/constants.hbar**2
+    forces = forces/np.sqrt(masses/1e3/constants.Avogadro)
+    forces = forces.reshape(t.n_frames,-1)*1e3/constants.Avogadro*1e9
+    sigma = LedoitWolf().fit(forces).covariance_
+    eigenvalues = linalg.eigvalsh(sigma)
+    kT_over_hbar_omega = constants.Boltzmann*310*np.sqrt(prefactor/eigenvalues)
+    SPR = np.sum(np.log(kT_over_hbar_omega+1))/seq.N # R
+
     # calculate the center of mass
-    cm = np.sum(t.xyz*masses[np.newaxis,:,np.newaxis],axis=1)/masses.sum()
+    cm = np.sum(t.xyz*masses,axis=1)/masses.sum()
     # calculate residue-cm distances
     si = t.xyz - cm[:,np.newaxis,:]
-    q = np.einsum('jim,jin->jmn', si*masses.reshape(1,-1,1),si)/masses.sum()
+    q = np.einsum('jim,jin->jmn', si*masses,si)/masses.sum()
     trace_q = np.trace(q,axis1=1,axis2=2)
     # calculate rg
     rgarray = np.sqrt(trace_q)
@@ -131,7 +188,7 @@ def calcRgTensor(t,residues,seq):
     S = 27*block_det_q_hat.av/block_tr_q_3.av
     Delta_err = 3/2*error_ratio(block_tr_q_hat_2.av,block_tr_q_2.av,block_tr_q_hat_2.sem,block_tr_q_2.sem)
     S_err = 27*error_ratio(block_det_q_hat.av,block_tr_q_3.av,block_det_q_hat.sem,block_tr_q_3.sem)
-    return rgarray, Delta_array, S_array, Delta, S, Delta_err, S_err
+    return rgarray, Delta_array, S_array, Delta, S, Delta_err, S_err, SPR
 
 def calcRs(traj):
     pairs = traj.top.select_pairs('all','all')
@@ -170,20 +227,22 @@ def analyse(residues,path,seq):
     traj = traj[10:]
     #energy maps
     df_emap = pd.DataFrame(index=range(traj.n_atoms),columns=range(traj.n_atoms),dtype=float)
-    df_cmap = pd.DataFrame(index=range(traj.n_atoms),columns=range(traj.n_atoms),dtype=float)
-    pairs, emap, switch = calcEnergyMap(traj,residues,seq,2.0)
+    df_dstd = pd.DataFrame(index=range(traj.n_atoms),columns=range(traj.n_atoms),dtype=float)
+    pairs, emap, forces, dstd = calcEnergyMap(traj,residues,seq,2.0)
     for k,(i,j) in enumerate(pairs):
         df_emap.loc[i,j] = emap[k]
         df_emap.loc[j,i] = emap[k]
-        df_cmap.loc[i,j] = switch[k]
-        df_cmap.loc[j,i] = switch[k]
-    df_analysis = pd.DataFrame(index=['Rg','ete','rh','nu','R0','ete2_Rg2','Delta','S'],columns=['value','error'])
+        df_dstd.loc[i,j] = dstd[k]
+        df_dstd.loc[j,i] = dstd[k]
+    df_analysis = pd.DataFrame(index=['Rg','ete','rh','nu','R0','ete2_Rg2','Delta','S','SPR'],columns=['value','error'])
     #rg
-    rgarray, Delta_array, S_array, Delta, S, Delta_err, S_err = calcRgTensor(traj,residues,seq)
+    rgarray, Delta_array, S_array, Delta, S, Delta_err, S_err, SPR = calcRgTensor(traj,residues,seq,forces)
     df_analysis.loc['Delta','value'] = Delta
     df_analysis.loc['Delta','error'] = Delta_err
     df_analysis.loc['S','value'] = S
     df_analysis.loc['S','error'] = S_err
+    df_analysis.loc['SPR','value'] = SPR
+    df_analysis.loc['SPR','error'] = 0
     np.save(path+'/rg.npy',rgarray)
     np.save(path+'/Delta.npy',Delta_array)
     np.save(path+'/S.npy',S_array)
@@ -221,14 +280,22 @@ def analyse(residues,path,seq):
     df_analysis.loc['nu','error'] = pcov[1,1]**0.5
     df_analysis.loc['R0','value'] = popt[0]
     df_analysis.loc['R0','error'] = pcov[0,0]**0.5
-    return df_emap,df_cmap,df_analysis
+    return df_emap,df_dstd,df_analysis
 
 def simulate(residues,sequences,seq_name,path):
-    hoomd.context.initialize("--mode=cpu");
+    seq = sequences.loc[seq_name]
+    N_res = seq.N
+
+    if N_res > 500:
+        hoomd.context.initialize("--mode=gpu");
+        L = 200
+    else:
+        hoomd.context.initialize("--mode=cpu");
+        L = (N_res-1)*0.38+4
+
+    hoomd.context.initialize("--mode=gpu");
     hoomd.option.set_notice_level(1)
     hoomd.util.quiet_status()
-
-    seq = sequences.loc[seq_name]
 
     lj_eps = 4.184*.2
     temp = 310
@@ -242,8 +309,6 @@ def simulate(residues,sequences,seq_name,path):
     lambdamap = pd.DataFrame((residues.lambdas.values+residues.lambdas.values.reshape(-1,1))/2,
                             index=residues.lambdas.index,columns=residues.lambdas.index)
 
-    N_res = seq.N
-    L = (N_res-1)*0.38+4
     N_save = 7000 if N_res < 150 else int(np.ceil(3e-4*N_res**2)*1000)
     N_steps = 1010*N_save
 
@@ -256,7 +321,10 @@ def simulate(residues,sequences,seq_name,path):
 
     snapshot.bonds.resize(N_res-1);
 
-    snapshot.particles.position[:] = [[0,0,(i-N_res/2.)*.38] for i in range(N_res)]
+    if N_res > 500:
+        snapshot.particles.position[:] = xy_spiral_array(N_res)
+    else:
+        snapshot.particles.position[:] = [[0,0,(i-N_res/2.)*.38] for i in range(N_res)]
     snapshot.particles.typeid[:] = [types.index(a) for a in fasta]
     snapshot.particles.mass[:] = [residues.loc[a].MW for a in fasta]
 
@@ -303,14 +371,12 @@ def simulate(residues,sequences,seq_name,path):
 
 residues = pd.read_csv('residues.csv').set_index('one',drop=False)
 
-sequences = pd.read_csv('replicas.csv',index_col=0)
-sequences.N = sequences.N.apply(lambda x : int(x))
-sequences.to_pickle('proteins.pkl')
+sequences = pd.read_csv('IDRome_DB.csv',index_col=0)
 
 t0 = time.time()
-#simulate(residues,sequences,args.seq_name,args.path)
-df_emap,df_cmap,df_analysis = analyse(residues,args.path,sequences.loc[args.seq_name])
+simulate(residues,sequences,args.seq_name,args.path)
+df_emap,df_dstd,df_analysis = analyse(residues,args.path,sequences.loc[args.seq_name])
 df_analysis.to_csv(args.path+'/analysis.csv')
 df_emap.to_csv(args.path+'/emap.csv')
-df_cmap.to_csv(args.path+'/cmap.csv')
+df_dstd.to_csv(args.path+'/stdev.csv')
 print('Timing sim and analysis {:.3f}'.format((time.time()-t0)/3600))
