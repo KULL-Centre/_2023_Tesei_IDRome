@@ -19,17 +19,17 @@ We also provide Notebooks on [Google Colab](https://colab.research.google.com/) 
 [![Video](https://img.youtube.com/vi/v7YqJVEswM0/default.jpg)](https://youtu.be/v7YqJVEswM0)
 
 ### Layout
-- `seq_conf_prop.ipynb` reproduces Fig. 1, 3, S2, S5, S6 _E_–_T_, and S7
+- `seq_conf_prop.ipynb` reproduces Fig. 1, 3, and Extended Data Fig. 2, 5, 6e-t, and 7
 - `go_analysis.ipynb` reproduces Fig. 2
 - `conservation_analysis.ipynb` reproduces Fig. 4
-- `clinvar_fmug.ipynb` reproduces Fig. 5 and S9
-- `uniprot_domains.ipynb` reproduces Fig. S1
-- `svr_models.ipynb` reproduces Fig. S8
+- `clinvar_fmug.ipynb` reproduces Fig. 5 and Extended Data Fig. 9
+- `uniprot_domains.ipynb` reproduces Extended Data Fig. 1
+- `svr_models.ipynb` reproduces Extended Data Fig. 8
 - `go_uniprot_calls.ipynb` performs API calls to obtain gene ontology terms from UniProt
 - `calc_seq_prop.ipynb` and `calc_seq_prop_SPOT.ipynb` compute sequence descriptors and generate the `IDRome_DB.csv` and `IDRome_DB_SPOT.csv` files
-- `CALVADOS_tests.ipynb` reproduces Fig. S3
-- `AF2_PAEs.ipynb` reproduces Fig. S4 
-- `CD-CODE.ipynb` reproduces Fig. S6 _A–D_
+- `CALVADOS_tests.ipynb` reproduces Extended Data Fig. 3
+- `AF2_PAEs.ipynb` reproduces Extended Data Fig. 4
+- `CD-CODE.ipynb` reproduces Extended Data Fig. 6a-d
 - `md_simulations/` contains code and data related to single-chain simulations performed using the CALVADOS model and [HOOMD-blue](https://hoomd-blue.readthedocs.io/en/latest/) v2.9.3 installed with [mphowardlab/azplugins](https://github.com/mphowardlab/azplugins)
 - `idr_selection/` contains code and data to generate the pLDDT-based and SPOT-based sets of IDRs
 - `idr_orthologs/` contains code and data to generate the set of orthologs of human IDRs
