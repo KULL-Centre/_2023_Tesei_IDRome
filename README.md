@@ -5,9 +5,9 @@
 
 # Conformational ensembles of the human IDRome
 
-This repository contains Python code, [Jupyter](http://jupyter.org) Notebooks, and data for reproducing the results presented in the manuscript _Conformational ensembles of the human intrinsically disordered proteome: Bridging chain compaction with function and sequence conservation_.
+This repository contains Python code, [Jupyter](http://jupyter.org) Notebooks, and data for reproducing the results presented in the manuscript _Conformational ensembles of the human intrinsically disordered proteome_.
 
-The CSV file `IDRome_DB.csv` and the Excel Sheet `IDRome_DB.xlsx` list the sequence and various sequence- and conformational properties of all the 28,058 IDRs.
+The CSV file `IDRome_DB.csv` lists amino acid sequences, sequence features, and conformational properties of all the 28,058 IDRs.
 
 Simulation trajectories and time series of conformational properties are available for all the IDRs at [sid.erda.dk/sharelink/AVZAJvJnCO](https://sid.erda.dk/sharelink/AVZAJvJnCO).
 
