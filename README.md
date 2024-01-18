@@ -2,6 +2,7 @@
 [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/KULL-Centre/_2023_Tesei_IDRome/blob/main/IDR_SVR_predictor.ipynb)
 [![DOI:10.1101/2023.05.08.539815](http://img.shields.io/badge/DOI-10.1101/2023.05.08.539815-B31B1B.svg)](https://doi.org/10.1101/2023.05.08.539815)
 [![Video](http://img.shields.io/badge/►-Video-FF0000.svg)](https://youtu.be/v7YqJVEswM0)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10251736.svg)](https://doi.org/10.5281/zenodo.10251736)
 
 # Conformational ensembles of the human IDRome
 
