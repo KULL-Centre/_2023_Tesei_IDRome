@@ -1,7 +1,7 @@
 [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/KULL-Centre/_2023_Tesei_IDRome/blob/main/IDRLab.ipynb)
 [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/KULL-Centre/_2023_Tesei_IDRome/blob/main/IDR_SVR_predictor.ipynb)
-[![DOI:10.1101/2023.05.08.539815](http://img.shields.io/badge/DOI-10.1101/2023.05.08.539815-B31B1B.svg)](https://doi.org/10.1101/2023.05.08.539815)
-[![DOI:10.1038/s41586-023-07004-5](http://img.shields.io/badge/DOI-10.1038/s41586-023-07004-5-B31B1B.svg)](https://doi.org/10.1038/s41586-023-07004-5)
+[![DOI:10.1101/2023.05.08.539815](http://img.shields.io/badge/Preprint-B31B1B.svg)](https://doi.org/10.1101/2023.05.08.539815)
+[![DOI:10.1038/s41586-023-07004-5](http://img.shields.io/badge/Article-B31B1B.svg)](https://doi.org/10.1038/s41586-023-07004-5)
 [![Video](http://img.shields.io/badge/►-Video-FF0000.svg)](https://youtu.be/kL3-cusHgzM)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10251736.svg)](https://doi.org/10.5281/zenodo.10251736)
 
@@ -18,7 +18,7 @@ We also provide Notebooks on [Google Colab](https://colab.research.google.com/) 
 - [`IDR_SVR_predictor.ipynb`](https://colab.research.google.com/github/KULL-Centre/_2023_Tesei_IDRome/blob/main/IDR_SVR_predictor.ipynb)
 
 
-[![Video](https://img.youtube.com/vi/v7YqJVEswM0/default.jpg)](https://youtu.be/v7YqJVEswM0)
+[![Video](https://img.youtube.com/vi/v7YqJVEswM0/default.jpg)](https://youtu.be/kL3-cusHgzM)
 
 ### Layout
 - `seq_conf_prop.ipynb` reproduces Fig. 1, 3, and Extended Data Fig. 2, 5, 6e-t, and 7
