@@ -17,6 +17,7 @@ We also provide Notebooks on [Google Colab](https://colab.research.google.com/) 
 - [`IDRLab.ipynb`](https://colab.research.google.com/github/KULL-Centre/_2023_Tesei_IDRome/blob/main/IDRLab.ipynb)
 - [`IDR_SVR_predictor.ipynb`](https://colab.research.google.com/github/KULL-Centre/_2023_Tesei_IDRome/blob/main/IDR_SVR_predictor.ipynb)
 
+An **updated version** of the Colab notebook is available in the [ColabCALVADOS](https://github.com/KULL-Centre/ColabCALVADOS) repository.
 
 [![Video](https://img.youtube.com/vi/v7YqJVEswM0/default.jpg)](https://youtu.be/kL3-cusHgzM)
 
